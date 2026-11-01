@@ -38,10 +38,22 @@ def parse(text):
 
 
 def shift(cues, offset_ms):
-    # BUG: clamps to zero by flooring, so short negative shifts collapse
-    # cues that start before the offset instead of rejecting them.
-    return [dict(c, start_ms=max(0, c["start_ms"] + offset_ms),
-                 end_ms=max(0, c["end_ms"] + offset_ms)) for c in cues]
+    """Shift every cue by ``offset_ms``.
+
+    Raises ``ValueError`` if the shift would move any cue before 00:00:00;
+    silently clamping the timeline would hide the data loss from operators.
+    """
+    shifted = []
+    for cue in cues:
+        start = cue["start_ms"] + offset_ms
+        end = cue["end_ms"] + offset_ms
+        if start < 0 or end < 0:
+            raise ValueError(
+                f"shift of {offset_ms} ms would move cue "
+                f"{cue.get('index', '?')} before 00:00:00"
+            )
+        shifted.append(dict(cue, start_ms=start, end_ms=end))
+    return shifted
 
 
 def render(cues):
