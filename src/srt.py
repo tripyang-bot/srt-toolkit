@@ -1,7 +1,7 @@
 import re
 
 _CUE = re.compile(
-    r"(?P<start>\d{2}:\d{2}:\d{2},(?P<sm>\d{3}))\s*-->\s*"
+    r"(?P<start>\d{2}:\d{2}:\d{2}),(?P<sm>\d{3})\s*-->\s*"
     r"(?P<end>\d{2}:\d{2}:\d{2},(?P<em>\d{3}))"
 )
 
